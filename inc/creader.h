@@ -23,7 +23,8 @@ typedef struct _creader_t
 creader_t *creader_create(int sections_max, int params_max, int line_max);
 int creader_load(creader_t *cr, const char *filename);
 
-void creader_release(creader_t *cr);
+void creader_destroy(creader_t *cr);
+
 void creader_dump(creader_t *cr);
 
 char *creader_get(creader_t *cr, const char *section, const char *name);

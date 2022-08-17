@@ -227,7 +227,7 @@ char *creader_get(creader_t *cr, const char *section, const char *name)
     return NULL;
 }
 
-void creader_release(creader_t *cr)
+void creader_destroy(creader_t *cr)
 {
     free(_tmp_line);
 

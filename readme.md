@@ -10,6 +10,9 @@ creader（Configration Reader）用来读取.ini文件类型的配置信息, 使
 
 提供字符串转化函数，可以将字符串转化成整数或者浮点数
 
+## TODO
+
+暂时不支持键值对的设置，也不支持配置到处到文件（因为这个项目叫creader...）
 ## 使用
 
 使用可以参考 `main.c`
@@ -24,7 +27,7 @@ creader（Configration Reader）用来读取.ini文件类型的配置信息, 使
 - `int creader_load(creader_t *cr, const char *filename);`
     - 将文件 filename 加载到结构体中， 失败返回-1，成功返回0
     - 读取到的节名，键值和值名都会忽略两端的空白字符（' ' '\t' '\n'）
-- `void creader_release(creader_t *cr);`
+- `void creader_destroy(creader_t *cr);`
     - 将结构体cr占用的堆空间释放
 - `void creader_dump(creader_t *cr);`
     - 打印结构体cr读取到的信息
@@ -33,6 +36,7 @@ creader（Configration Reader）用来读取.ini文件类型的配置信息, 使
     - 读取时，从后往前读取，如果找到键名，返回值，否则返回NULL
 - `int str2long(const char *str, long *number);`
     - 将字符串中第一处连续的数字读取出来，组成long型的整数
+    - (因为懒得判断数字大小，所以读出来的数需要根据你的预设来进行强制类型转换，如果你不接受long型的话)
     - 读取成功返回停止时字符串的下标（>0），否则返回-1
 - `int str2longarray(const char *str, long *number, int n);`
     - 将字符串中读取n片连续的数字，组成long型的整数数组

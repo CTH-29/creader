@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 
     creader_t *cr = creader_create(10, 50, 32);
 
-    if (creader_load(cr, "/home/taihua.chen/projs/mytest/creader/doc/test.ini"))
+    if (creader_load(cr, "/home/taihua.chen/projs/creader/doc/test.ini"))
         printf("creader_load err");
 
     creader_dump(cr);
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     else
         printf("str2doublearray err\n");
 
-    creader_release(cr);
+    creader_destroy(cr);
 
     printf("**************** main end ****************\n");
     return 0;
