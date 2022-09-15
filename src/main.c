@@ -8,34 +8,34 @@ int main(int argc, char *argv[])
 
     creader_t *cr = creader_create(10, 50, 32);
 
-    if (creader_load(cr, "/home/taihua.chen/projs/creader/doc/test.ini"))
+    if (creader_load(cr, "/home/taihua.chen/projs/myprojects/creader/doc/test.ini"))
         printf("creader_load err");
 
     creader_dump(cr);
 
-    long iarray[4];
+    int iarray[4];
 
-    if (str2long(creader_get(cr, NULL, "integer1"), iarray) > 0)
-        printf("str2long = [%ld]\n", iarray[0]);
+    if (creader_get_int(cr, NULL, "integer1", iarray) == 0)
+        printf("creader_get_int = [%d]\n", iarray[0]);
     else
-        printf("str2long err\n");
+        printf("creader_get_int err\n");
 
-    if ((ret = str2longarray(creader_get(cr, NULL, "integer2"), iarray, 4)) == 4)
-        printf("str2longarray = [%ld %ld %ld %ld]\n", iarray[0], iarray[1], iarray[2], iarray[3]);
+    if(creader_get_int_array(cr, NULL, "integer2",iarray,4) == 4)
+        printf("creader_get_int_array = [%d %d %d %d]\n", iarray[0], iarray[1], iarray[2], iarray[3]);
     else
-        printf("str2longarray err\n");
+        printf("creader_get_int_array err\n");
 
     double darray[4];
 
-    if (str2double(creader_get(cr, NULL, "double1"), darray) > 0)
-        printf("str2double = [%lf]\n", darray[0]);
+    if (creader_get_double(cr, NULL, "double1", darray) == 0)
+        printf("creader_get_double = [%lf]\n", darray[0]);
     else
-        printf("str2double err\n");
+        printf("creader_get_double err\n");
 
-    if ((ret = str2doublearray(creader_get(cr, NULL, "double2"), darray, 4)) == 4)
-        printf("creader_get = [%lf %lf %lf %lf]\n", darray[0], darray[1], darray[2], darray[3]);
+    if (creader_get_double_array(cr, NULL, "double2", darray, 4) == 4)
+        printf("creader_get_double_array = [%lf %lf %lf %lf]\n", darray[0], darray[1], darray[2], darray[3]);
     else
-        printf("str2doublearray err\n");
+        printf("creader_get_double_array err\n");
 
     creader_destroy(cr);
 

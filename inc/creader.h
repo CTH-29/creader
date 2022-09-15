@@ -16,7 +16,7 @@ typedef struct _creader_t
     int *section_index;
 
     int params;
-    char **name_list;
+    char **key_list;
     char **value_list;
 }creader_t;
 
@@ -27,12 +27,11 @@ void creader_destroy(creader_t *cr);
 
 void creader_dump(creader_t *cr);
 
-char *creader_get(creader_t *cr, const char *section, const char *name);
+char *creader_get_str(creader_t *cr, const char *section, const char *key);
+int creader_get_int(creader_t *cr, const char *section, const char *key, int *val);
+int creader_get_int_array(creader_t *cr, const char *section, const char *key, int *val, int max_count);
+int creader_get_double(creader_t *cr, const char *section, const char *key, double *val);
+int creader_get_double_array(creader_t *cr, const char *section, const char *key, double *val, int max_count);
 
-int str2long(const char *str, long *number);
-int str2longarray(const char *str, long *number, int n);
-
-int str2double(const char *str, double *number);
-int str2doublearray(const char *str, double *number, int n);
 
 #endif

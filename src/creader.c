@@ -17,7 +17,6 @@ static int fskip_to_next_line(FILE *fp)
 
 static int fskip_whitespace(FILE *fp)
 {
-
     while (1)
     {
         char ch = fgetc(fp);
@@ -129,7 +128,7 @@ creader_t *creader_create(int sections_max, int params_max, int line_max)
     cr->section_list = (char **)malloc(sizeof(char *) * sections_max);
     cr->section_index = (int *)malloc(sizeof(int) * sections_max);
 
-    cr->name_list = (char **)malloc(sizeof(char *) * params_max);
+    cr->key_list = (char **)malloc(sizeof(char *) * params_max);
     cr->value_list = (char **)malloc(sizeof(char *) * params_max);
 
     return cr;
@@ -183,13 +182,13 @@ int creader_load(creader_t *cr, const char *filename)
                 {
                     if (cr->params >= cr->params_max)
                         goto end;
-                    cr->name_list[cr->params] = name_tmp;
+                    cr->key_list[cr->params] = name_tmp;
                     cr->value_list[cr->params] = val_tmp;
                     cr->params++;
                 }
                 else
                 {
-                    free(cr->name_list[cr->params]);
+                    free(cr->key_list[cr->params]);
                 }
             }
             break;
@@ -201,7 +200,7 @@ end:
     return 0;
 }
 
-char *creader_get(creader_t *cr, const char *section, const char *name)
+char *creader_get_str(creader_t *cr, const char *section, const char *key)
 {
     if (cr == NULL)
         return NULL;
@@ -221,7 +220,7 @@ char *creader_get(creader_t *cr, const char *section, const char *name)
     }
     for (int i = end_index; i >= start_index; i--)
     {
-        if (strcmp(name, cr->name_list[i]) == 0)
+        if (strcmp(key, cr->key_list[i]) == 0)
             return cr->value_list[i];
     }
     return NULL;
@@ -237,13 +236,13 @@ void creader_destroy(creader_t *cr)
     }
     for (int i = 0; i < cr->params; i++)
     {
-        free(cr->name_list[i]);
+        free(cr->key_list[i]);
         free(cr->value_list[i]);
     }
 
     free(cr->section_list);
     free(cr->section_index);
-    free(cr->name_list);
+    free(cr->key_list);
     free(cr->value_list);
 
     free(cr);
@@ -260,21 +259,21 @@ void creader_dump(creader_t *cr)
     printf("sections = %d\n", cr->sections);
     for (int i = 0; i < cr->sections; i++)
     {
-        printf("\t%d section [%s] start at [%d]\n", i, cr->section_list[i], cr->section_index[i]);
+        printf("\t%3d section [ %s ] start at [ %d ]\n", i, cr->section_list[i], cr->section_index[i]);
     }
     printf("params = %d\n", cr->params);
     for (int i = 0; i < cr->params; i++)
     {
-        printf("\t%d [%s] = [%s]\n", i, cr->name_list[i], cr->value_list[i]);
+        printf("\t%3d [ %s ] = [ %s ]\n", i, cr->key_list[i], cr->value_list[i]);
     }
 }
 
-int str2long(const char *str, long *number)
+int str2int(const char *str, int *number)
 {
     int i, num_tmp = 0;
     char state = 0, pos_or_neg = 1;
     if (str == NULL || number == NULL)
-        return -1;
+        return 0;
     //printf("str is [%s]\n", str);
     for (i = 0; i < strlen(str); i++)
     {
@@ -316,17 +315,17 @@ end:
         *number = pos_or_neg * num_tmp;
         return i;
     }
-    return -1;
+    return 0;
 }
 
-int str2longarray(const char *str, long *number, int n)
+int str2ints(const char *str, int *number, int n)
 {
     int i, offset = 0;
     if (str == NULL || number == NULL)
         return -1;
     for (i = 0; i < n; i++)
     {
-        int offset_tmp = str2long(str + offset, number + i);
+        int offset_tmp = str2int(str + offset, number + i);
         if (offset_tmp > 0)
         {
             offset += offset_tmp;
@@ -345,7 +344,7 @@ int str2double(const char *str, double *number)
     double num_frac_tmp = 0, factor_tmp = 0.1;
     char state = 0, pos_or_neg = 1;
     if (str == NULL || number == NULL)
-        return -1;
+        return 0;
     //printf("str is [%s]\n", str);
     for (i = 0; i < strlen(str); i++)
     {
@@ -404,10 +403,10 @@ end:
         *number = pos_or_neg * (num_int_tmp + num_frac_tmp);
         return i;
     }
-    return -1;
+    return 0;
 }
 
-int str2doublearray(const char *str, double *number, int n)
+int str2doubles(const char *str, double *number, int n)
 {
     int i, offset = 0;
     if (str == NULL || number == NULL)
@@ -425,4 +424,50 @@ int str2doublearray(const char *str, double *number, int n)
         }
     }
     return i;
+}
+
+int creader_get_int(creader_t *cr, const char *section, const char *key, int *val)
+{
+    char *str;
+    int num;
+    if(str = creader_get_str(cr,section,key))
+    {
+        if( str2int(str,&num) > 0 )
+        {
+            *val = num;
+            return 0;
+        }
+    }
+    return -1;
+}
+
+int creader_get_int_array(creader_t *cr, const char *section, const char *key, int *val, int max_count)
+{
+    char *str;
+    if(str = creader_get_str(cr,section,key))
+        return str2ints(str,val,max_count);
+    return -1;
+}
+
+int creader_get_double(creader_t *cr, const char *section, const char *key, double *val)
+{
+    char *str;
+    double num;
+    if(str = creader_get_str(cr,section,key))
+    {
+        if( str2double(str,&num) > 0 )
+        {
+            *val = num;
+            return 0;
+        }
+    }
+    return -1;
+}
+
+int creader_get_double_array(creader_t *cr, const char *section, const char *key, double *val, int max_count)
+{
+    char *str;
+    if(str = creader_get_str(cr,section,key))
+        return str2doubles(str,val,max_count);
+    return -1;
 }
