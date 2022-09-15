@@ -29,21 +29,21 @@ creader（Configration Reader）用来读取.ini文件类型的配置信息, 使
 
 - 将文件 filename 加载到结构体中， 失败返回-1，成功返回0
 - 读取到的节名，键值和值名都会忽略两端的空白字符（' ' '\t' '\n'）
-- 
+
 `void creader_destroy(creader_t *cr);`
 
 - 将结构体cr占用的堆空间释放
-- 
+
 `void creader_dump(creader_t *cr);`
 
 - 打印结构体cr读取到的信息
-- 
+
 `char *creader_get_str(creader_t *cr, const char *section, const char *name);`
 
 - 从结构体cr读取键值对，section如果为NULL，将从全部参数中读取，否则将从相应节获取
 - 读取时，从后往前读取，如果找到键名，返回值，否则返回NULL
 - 该字符串空间会被creader_destroy释放
-- 
+
 `int creader_get_int(creader_t *cr, const char *section, const char *key, int *val);`
 `int creader_get_int_array(creader_t *cr, const char *section, const char *key, int *val, int max_count)`
 
