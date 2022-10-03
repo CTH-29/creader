@@ -111,25 +111,22 @@ char *fdump_until(FILE *fp, char end)
     return ret;
 }
 
-creader_t *creader_create(int sections_max, int params_max, int line_max)
+creader_t *creader_create()
 {
-    if (line_max < 32)
-        line_max = 32;
-    _tmp_line = (char *)malloc(line_max);
-
     creader_t *cr = (creader_t *)malloc(sizeof(creader_t));
+    _tmp_line = (char *)malloc(256);
 
-    cr->sections_max = sections_max;
-    cr->params_max = params_max;
+    cr->sections_max = 256;
+    cr->params_max = 2048;
 
     cr->sections = 0;
     cr->params = 0;
 
-    cr->section_list = (char **)malloc(sizeof(char *) * sections_max);
-    cr->section_index = (int *)malloc(sizeof(int) * sections_max);
+    cr->section_list = (char **)malloc(sizeof(char *) * cr->sections_max);
+    cr->section_index = (int *)malloc(sizeof(int) * cr->sections_max);
 
-    cr->key_list = (char **)malloc(sizeof(char *) * params_max);
-    cr->value_list = (char **)malloc(sizeof(char *) * params_max);
+    cr->key_list = (char **)malloc(sizeof(char *) * cr->params_max);
+    cr->value_list = (char **)malloc(sizeof(char *) * cr->params_max);
 
     return cr;
 }
