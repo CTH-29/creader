@@ -20,7 +20,7 @@ typedef struct _creader_t
     char **value_list;
 }creader_t;
 
-creader_t *creader_create(int sections_max, int params_max, int line_max);
+creader_t *creader_create(void);
 int creader_load(creader_t *cr, const char *filename);
 
 void creader_destroy(creader_t *cr);
