@@ -20,7 +20,7 @@ OBJ = $(patsubst %.c,$(OBJ_PERFIX)/%.o,$(SRC_LIST))
 
 CBASEFLAGS = $(addprefix -I,$(INC_PERFIX))
 
-CFLAGS = $(CBASEFLAGS)
+CFLAGS = $(CBASEFLAGS) -Wall
 
 $(TARGET): $(OBJ)
 	@ mkdir -p $(BIN_PERFIX)

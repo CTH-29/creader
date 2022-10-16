@@ -2,14 +2,11 @@
 
 int main(int argc, char *argv[])
 {
-    int ret;
-    char str[256];
     printf("***************  main start ***************\n");
 
     creader_t *cr = creader_create(10, 50, 32);
-
-    if (creader_load(cr, "/home/taihua.chen/projs/myprojects/creader/doc/test.ini"))
-        printf("creader_load err");
+    if (creader_load(cr, "./doc/test.ini"))
+        printf("creader_load err\n");
 
     creader_dump(cr);
 
