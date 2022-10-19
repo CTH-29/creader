@@ -3,3 +3,4 @@ bin/creader
 inc/creader.h
 bin/main.o
 bin/creader.o
+build
