@@ -241,15 +241,11 @@ static char *_str2long(const char *str, long *num)
     const char *cur_ptr = str;
     char *end_ptr;
     if (str == NULL || num == NULL)
-        return 0;
+        return NULL;
     while (str[0] != '\0')
     {
         cur_ptr = str;
-        printf("before str %c, addr %p, num %ld, number %ld, cur_ptr %p, end_ptr %p\n", str[0], str, *num, number, cur_ptr, end_ptr);
-        if(isdigit(str[0]) || str[0] == '-')
-        // if ((str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) \
-        //     || ('0' < str[0] && str[0] <= '9')                  \
-        //     || ((str[0] == '-') && ('0' < str[1]) && str[1] <= '9'))
+        if (isdigit(str[0]) || (str[0] == '-' && ('0' < str[1]) && str[1] <= '9'))
         {
             number = strtol(str, &end_ptr, 0);
             if (number == 0 && end_ptr == cur_ptr)
@@ -257,7 +253,6 @@ static char *_str2long(const char *str, long *num)
             *num = number;
             return end_ptr;
         }
-        printf("after str %c, addr %p, num %ld, number %ld, cur_ptr %p, end_ptr %p\n", str[0], str, *num, number, cur_ptr, end_ptr);
         str++;
     }
     return NULL;
@@ -268,158 +263,98 @@ bool str2long(const char *str, long *num)
     return (_str2long(str, num) != NULL) ? true : false;
 }
 
-// int str2longs(const char *str, long *number, int n)
-// {
-//     int i;
-//     int offset = 0;
-//     if (str == NULL || number == NULL)
-//         return -1;
-//     for (i = 0; i < n; i++)
-//     {
-//         int offset_tmp = str2int(str + offset, number + i);
-//         if (offset_tmp > 0)
-//         {
-//             offset += offset_tmp;
-//         }
-//         else
-//         {
-//             break;
-//         }
-//     }
-//     return i;
-// }
+int str2longs(const char *str, long *num, int count_max)
+{
+    int num_count = 0;
+    const char *ptr = str;
+    do
+    {
+        ptr = _str2long(ptr, num);
+        if (ptr == NULL)
+            break;
+        num++;
+        num_count++;
+    } while (num_count < count_max);
+    return num_count;
+}
 
-// int str2double(const char *str, double *number)
-// {
-//     unsigned int i;
-//     int num_int_tmp = 0;
-//     double num_frac_tmp = 0, factor_tmp = 0.1;
-//     char state = 0, pos_or_neg = 1;
-//     if (str == NULL || number == NULL)
-//         return 0;
-//     // printf("str is [%s]\n", str);
-//     for (i = 0; i < strlen(str); i++)
-//     {
-//         switch (state)
-//         {
-//         case 0:
-//             if (str[i] == '-')
-//             {
-//                 pos_or_neg = -1;
-//                 break;
-//             }
-//             else if (isdigit(str[i]))
-//             {
-//                 state = 1;
-//             }
-//             else
-//             {
-//                 pos_or_neg = 1;
-//                 break;
-//             }
-//         case 1:
-//             if (isdigit(str[i]))
-//             {
-//                 num_int_tmp *= 10;
-//                 num_int_tmp += str[i] - '0';
-//             }
-//             else if (str[i] == '.')
-//             {
-//                 state = 2;
-//             }
-//             else
-//             {
-//                 goto end;
-//             }
-//             break;
-//         case 2:
-//             if (isdigit(str[i]))
-//             {
-//                 num_frac_tmp += (str[i] - '0') * factor_tmp;
-//                 factor_tmp *= 0.1;
-//             }
-//             else
-//             {
-//                 goto end;
-//             }
-//             break;
-//         default:
-//             break;
-//         }
-//         // printf("para [%d][%d][%d][%ld][%lf]\n", i ,state, pos_or_neg, num_int_tmp,num_frac_tmp);
-//     }
-// end:
+static char *_str2double(const char *str, double *num)
+{
+    double number = 0;
+    const char *cur_ptr = str;
+    char *end_ptr;
+    if (str == NULL || num == NULL)
+        return 0;
+    while (str[0] != '\0')
+    {
+        cur_ptr = str;
+        if (isdigit(str[0]) || (str[0] == '-' && ('0' < str[1]) && str[1] <= '9'))
+        {
+            number = strtod(str, &end_ptr);
+            if (number == 0 && end_ptr == cur_ptr)
+                return NULL;
+            *num = number;
+            return end_ptr;
+        }
+        str++;
+    }
+    return NULL;
+}
 
-//     if (state > 0)
-//     {
-//         *number = pos_or_neg * (num_int_tmp + num_frac_tmp);
-//         return i;
-//     }
-//     return 0;
-// }
+bool str2double(const char *str, double *num)
+{
+    return (_str2double(str, num) != NULL) ? true : false;
+}
 
-// int str2doubles(const char *str, double *number, int n)
-// {
-//     int i, offset = 0;
-//     if (str == NULL || number == NULL)
-//         return -1;
-//     for (i = 0; i < n; i++)
-//     {
-//         int offset_tmp = str2double(str + offset, number + i);
-//         if (offset_tmp > 0)
-//         {
-//             offset += offset_tmp;
-//         }
-//         else
-//         {
-//             break;
-//         }
-//     }
-//     return i;
-// }
+int str2doubles(const char *str, double *num, int count_max)
+{
+    int num_count = 0;
+    const char *ptr = str;
+    do
+    {
+        ptr = _str2double(ptr, num);
+        if (ptr == NULL)
+            break;
+        num++;
+        num_count++;
+    } while (num_count < count_max);
+    return num_count;
+}
 
-// int creader_get_int(creader_t *cr, const char *section, const char *key, int *val)
-// {
-//     char *str;
-//     int num;
-//     if (str = creader_get_str(cr, section, key))
-//     {
-//         if (str2int(str, &num) > 0)
-//         {
-//             *val = num;
-//             return 0;
-//         }
-//     }
-//     return -1;
-// }
-
-// int creader_get_int_array(creader_t *cr, const char *section, const char *key, int *val, int max_count)
-// {
-//     char *str;
-//     if (str = creader_get_str(cr, section, key))
-//         return str2ints(str, val, max_count);
-//     return -1;
-// }
-
-// int creader_get_double(creader_t *cr, const char *section, const char *key, double *val)
-// {
-//     char *str;
-//     double num;
-//     if (str = creader_get_str(cr, section, key))
-//     {
-//         if (str2double(str, &num) > 0)
-//         {
-//             *val = num;
-//             return 0;
-//         }
-//     }
-//     return -1;
-// }
-
-// int creader_get_double_array(creader_t *cr, const char *section, const char *key, double *val, int max_count)
-// {
-//     char *str;
-//     if (str = creader_get_str(cr, section, key))
-//         return str2doubles(str, val, max_count);
-//     return -1;
-// }
+bool creader_get_int(creader_t *cr, const char *section, const char *key, int *val)
+{
+    long num;
+    if (str2long(creader_get_str(cr, section, key), &num))
+    {
+        *val = (int)num;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+int creader_get_int_array(creader_t *cr, const char *section, const char *key, int *val, int count_max)
+{
+    long num[count_max];
+    int count = str2longs(creader_get_str(cr, section, key), num, count_max);
+    for (int i = 0; i < count; i++)
+        val[i] = (int)num[i];
+    return count;
+}
+bool creader_get_long(creader_t *cr, const char *section, const char *key, long *val)
+{
+    return str2long(creader_get_str(cr, section, key), val);
+}
+int creader_get_long_array(creader_t *cr, const char *section, const char *key, long *val, int count_max)
+{
+    return str2longs(creader_get_str(cr, section, key), val, count_max);
+}
+bool creader_get_double(creader_t *cr, const char *section, const char *key, double *val)
+{
+    return str2double(creader_get_str(cr, section, key), val);
+}
+int creader_get_double_array(creader_t *cr, const char *section, const char *key, double *val, int count_max)
+{
+    return str2doubles(creader_get_str(cr, section, key), val, count_max);
+}
